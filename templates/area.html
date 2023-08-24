@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://lib.baomitu.com/jquery/1.9.1/jquery.js"></script>
+    <script>
+        $(function() {
+            loadProvince();
+        });
+        function loadProvince(){
+            loadArea(0, 'province', loadCity)
+        }
+         function loadCity(){
+            console.log($('#province').val())
+            loadArea($('#province').val(), 'city', loadTown)
+        }
+         function loadTown(){
+            loadArea($('#city').val(), 'town')
+        }
+        function loadArea(pid, selectid, nextLoad) {
+            $('#' + selectid).empty()
+            $.get("/stu/getInfo/", {'pid': pid}, function (result) {
+                areaList = JSON.parse(result.areaList)
+                areaList.forEach(function(item){
+                    $('#' + selectid).append("<option value='"+ item.pk +"'>"+ item.fields.name +"</option>")
+                })
+                  if (nextLoad != null) {
+                      nextLoad();
+                  }
+            })
+        }
+    </script>
+</head>
+<body>
+    <select id="province" onchange="loadCity()"></select>
+    <select id="city" onchange="loadTown()"></select>
+    <select id="town"></select>
+</body>
+</html>
